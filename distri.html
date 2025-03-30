@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planificador de Rutas</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
+    
+    <!-- Página de Inicio de Sesión -->
+    <div id="loginPage" class="bg-white p-8 rounded-lg shadow-md w-80">
+        <h2 class="text-2xl font-bold mb-4">Iniciar Sesión</h2>
+        <button onclick="login()" class="bg-blue-500 text-white px-4 py-2 rounded">Acceder</button>
+    </div>
+    
+    <!-- Aplicación Principal -->
+    <div id="app" class="hidden w-full max-w-4xl p-6 bg-white rounded-lg shadow-md">
+        <h2 class="text-2xl font-bold mb-4">Planificador de Rutas</h2>
+        
+        <!-- Sección de Domicilios -->
+        <div class="mb-4">
+            <h3 class="font-semibold">Domicilios</h3>
+            <input id="domicilioInput" type="text" class="border p-2 w-full" placeholder="Agregar domicilio">
+            <button onclick="agregarDomicilio()" class="bg-green-500 text-white px-4 py-2 mt-2 rounded">Agregar</button>
+            <ul id="domicilioLista" class="mt-2"></ul>
+        </div>
+        
+        <!-- Sección de Clientes -->
+        <div class="mb-4">
+            <h3 class="font-semibold">Clientes</h3>
+            <input id="clienteInput" type="text" class="border p-2 w-full" placeholder="Agregar cliente">
+            <button onclick="agregarCliente()" class="bg-green-500 text-white px-4 py-2 mt-2 rounded">Agregar</button>
+            <ul id="clienteLista" class="mt-2"></ul>
+        </div>
+        
+        <!-- Sección de Historial -->
+        <div class="mb-4">
+            <h3 class="font-semibold">Historial de Visitas</h3>
+            <ul id="historialLista" class="mt-2"></ul>
+        </div>
+        
+        <!-- Gráfica de Ventas -->
+        <canvas id="ventasChart" class="mt-4"></canvas>
+    </div>
+    
+    <script>
+        function login() {
+            document.getElementById('loginPage').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+        }
+        
+        let domicilios = [];
+        let clientes = [];
+        let historial = [];
+        
+        function agregarDomicilio() {
+            let input = document.getElementById('domicilioInput');
+            if (input.value.trim()) {
+                domicilios.push(input.value);
+                actualizarLista('domicilioLista', domicilios);
+                input.value = '';
+            }
+        }
+        
+        function agregarCliente() {
+            let input = document.getElementById('clienteInput');
+            if (input.value.trim()) {
+                clientes.push(input.value);
+                actualizarLista('clienteLista', clientes);
+                input.value = '';
+            }
+        }
+        
+        function actualizarLista(elementoId, datos) {
+            let lista = document.getElementById(elementoId);
+            lista.innerHTML = '';
+            datos.forEach((item, index) => {
+                let li = document.createElement('li');
+                li.className = 'border p-2 mt-1 flex justify-between';
+                li.innerHTML = `${item} <button onclick="eliminarElemento('${elementoId}', ${index})" class="text-red-500">Eliminar</button>`;
+                lista.appendChild(li);
+            });
+        }
+        
+        function eliminarElemento(elementoId, index) {
+            if (elementoId === 'domicilioLista') {
+                domicilios.splice(index, 1);
+            } else if (elementoId === 'clienteLista') {
+                clientes.splice(index, 1);
+            }
+            actualizarLista(elementoId, elementoId === 'domicilioLista' ? domicilios : clientes);
+        }
+        
+        // Gráfica de Ventas Simulada
+        let ctx = document.getElementById('ventasChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Enero', 'Febrero', 'Marzo'],
+                datasets: [{
+                    label: 'Ventas',
+                    data: [12, 19, 8],
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)'
+                }]
+            }
+        });
+    </script>
+</body>
+</html>
